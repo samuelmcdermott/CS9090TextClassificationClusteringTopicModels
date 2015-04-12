@@ -7,7 +7,7 @@ preprocess<-function(){
   require(rJava)
   require(SnowballC)
   
-  
+  #make sure we don't use factors for strings
   options(stringsAsFactors = FALSE)
   rt.raw <- read.csv(file="reuters.csv",header=T,sep=",")
   rt.df = NULL

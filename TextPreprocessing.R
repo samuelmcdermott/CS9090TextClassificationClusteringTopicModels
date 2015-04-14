@@ -10,10 +10,11 @@ preprocess<-function(){
   #make sure we don't use factors for strings
   options(stringsAsFactors = FALSE)
   rt.raw <- read.csv(file="reuters.csv",header=T,sep=",")
+  rt.raw <- rt.raw[sample(1:nrow(rt.raw),size=1000,replace=FALSE),]
   rt.df = NULL
   #cleaning and preprocessing
   topicColumns <-grep("topic",attributes(rt.raw)$names,ignore.case = TRUE, value = FALSE)
-  for(i in 1:10){
+  for(i in 1:nrow(rt.raw)){
     print(i)
     numTopics <- sum(rt.raw[i,topicColumns])
     if (numTopics > 0 && rt.raw$doc.text[i]!= ""){

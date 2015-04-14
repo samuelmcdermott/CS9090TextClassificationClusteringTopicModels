@@ -7,10 +7,10 @@ preprocess<-function(){
   require(rJava)
   require(SnowballC)
   
-  #make sure we don't use factors for strings
-  options(stringsAsFactors = FALSE)
+  #make sure we don't use factors for strings as default
+  #options(stringsAsFactors = FALSE)
   rt.raw <- read.csv(file="reuters.csv",header=T,sep=",")
-  rt.raw <- rt.raw[sample(1:nrow(rt.raw),size=1000,replace=FALSE),]
+  rt.raw <- rt.raw[sample(1:nrow(rt.raw),2000,replace=FALSE),]
   rt.df = NULL
   #cleaning and preprocessing
   topicColumns <-grep("topic",attributes(rt.raw)$names,ignore.case = TRUE, value = FALSE)
@@ -21,32 +21,15 @@ preprocess<-function(){
       for(j in topicColumns){
         if(rt.raw[i,j] == 1){
           oldrow<-rt.raw[i,]
-          newrow <- data.frame(oldrow$purpose,attributes(oldrow[j])$names,oldrow$doc.title,oldrow$doc.text)
+          newrow <- data.frame(attributes(oldrow[j])$names,oldrow$doc.title,oldrow$doc.text)
           rt.df <-rbind(rt.df,newrow)
         }
       }
     }
   }
-  
-  names(rt.df)<- list("purpose","topic","title","text")
-  rt.corpus <- Corpus(DataframeSource(data.frame(rt.df[,4])))
-    # Step 1: Remove numeric characters [0-9]
-    rt.corpus <- tm_map(rt.corpus, removeNumbers)
-    
-    # Step 2: Make all letters lowercase
-    rt.corpus <- tm_map(rt.corpus, tolower)
-    
-    # Step 3: Remove stopwords (EN) from SMART (coincides with MC_tk list)
-    rt.corpus <- tm_map(rt.corpus, removeWords, stopwords("SMART"))
-    
-    # Step 4: Replace punctuation with space (to handle intraword punct.)
-    removePunctuationCustom <- function(x){    
-      x <- gsub("[[:punct:]]+", " ", x)
-    }
-    rt.corpus <- tm_map(rt.corpus, removePunctuationCustom)
-    
-    # Step 5: Remove excess whitespace
-    rt.corpus <- tm_map(rt.corpus, stripWhitespace)
-  rt.corpus <- tm_map(rt.corpus, PlainTextDocument)
-  return(list(rt.df[1:3],rt.corpus))
+  #shuffle up the instances for bias free k fold
+  rt.df <- rt.df[sample(1:nrow(rt.df),size=nrow(rt.df),replace=FALSE),]
+  names(rt.df)<- list("topic","title","text")
+ rt.df$topic <- as.factor(rt.df$topic)
+  return(rt.df)
 }

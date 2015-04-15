@@ -6,8 +6,7 @@ preprocess<-function(){
   require(openNLPdata)
   require(rJava)
   require(SnowballC)
-  
-  #make sure we don't use factors for strings as default
+  populus = c("topic.earn","topic.acquisitions",  "topic.money-fx",  "topic.grain",	"topic.crude",	"topic.trade",	"topic.interest",	"topic.ship",	"topic.wheat",	"topic.corn")  #make sure we don't use factors for strings as default
   #options(stringsAsFactors = FALSE)
   rt.raw <- read.csv(file="reuters.csv",header=T,sep=",")
   rt.raw <- rt.raw[sample(1:nrow(rt.raw),2000,replace=FALSE),]
@@ -27,9 +26,11 @@ preprocess<-function(){
       }
     }
   }
-  #shuffle up the instances for bias free k fold
-  rt.df <- rt.df[sample(1:nrow(rt.df),size=nrow(rt.df),replace=FALSE),]
   names(rt.df)<- list("topic","title","text")
+  #shuffle up the instances for bias free k fold
+  rt.df <- subset(rt.df, subset = topic %in% populus)
+  rt.df <- rt.df[sample(1:nrow(rt.df),size=nrow(rt.df),replace=FALSE),]
+  
  rt.df$topic <- as.factor(rt.df$topic)
   return(rt.df)
 }

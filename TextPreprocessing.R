@@ -7,9 +7,9 @@ preprocess<-function(){
   require(rJava)
   require(SnowballC)
   populus = c("topic.earn","topic.acquisitions",  "topic.money-fx",  "topic.grain",	"topic.crude",	"topic.trade",	"topic.interest",	"topic.ship",	"topic.wheat",	"topic.corn")  #make sure we don't use factors for strings as default
-  #options(stringsAsFactors = FALSE)
+  options(stringsAsFactors = FALSE)
   rt.raw <- read.csv(file="reuters.csv",header=T,sep=",")
-  rt.raw <- rt.raw[sample(1:nrow(rt.raw),2000,replace=FALSE),]
+  #rt.raw <- rt.raw[sample(1:nrow(rt.raw),2000,replace=FALSE),]
   rt.df = NULL
   #cleaning and preprocessing
   topicColumns <-grep("topic",attributes(rt.raw)$names,ignore.case = TRUE, value = FALSE)

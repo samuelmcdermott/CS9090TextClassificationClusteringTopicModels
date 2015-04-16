@@ -1,77 +1,62 @@
-featureClassification<-function(input,k,n){
+featureClassification<-function(input,n,k, classifier,...){
   require(RTextTools)
   require(e1071)
+
+  #just incase user inputted incorrectly
+  classifier <- toupper(classifier)
+
   #put everything in right format (& make the topic a numeric factor)
   input$topic <- as.numeric(factor(input$topic))
   input$title <- as.character(input$title)
   input$text <- as.character(input$text)
-  
-  input.matrix <- create_matrix(cbind(input$title,input$text), language = "english",ngramLength = n, removeNumbers = TRUE, removePunctuation = TRUE, removeSparseTerms = 0.1, removeStopwords = TRUE, stemWords = TRUE, toLower = TRUE, weighting = tm::weightTfIdf)
+
+  #create a dtm
+  input.matrix <- create_matrix(cbind(input$title,input$text), language = "english",ngramLength = n,removeNumbers = TRUE, removePunctuation = TRUE, removeStopwords = TRUE, stemWords = TRUE, toLower = TRUE, weighting = tm::weightTfIdf)
+  #for Naive Bayes we need it as an actual matrix
+  if(classifier == "NB"){
   NB.matrix <-as.matrix(input.matrix)
-  
-  NB.analytics <-NULL
-  SVM.analytics<-NULL
-  MAXENT.analytics<-NULL
-  GLMNET.analytics <-NULL
-  NNET.analytics <- NULL
- # lets fold this up
- for(fold in 1:k){
-   print(fold)
-   #train using (k-1)n/k instances and test using n/k
-   sizeOfTest <- floor(nrow(input)/k)
-   testLower <-  ((fold-1)*sizeOfTest)
-   testUpper<- testLower + sizeOfTest
-   if(testUpper+1 >= nrow(input)){testUpper <- nrow(input)-1}
-   
-   print("training models..")
-   input.corpus <-create_container(input.matrix,as.numeric(factor(input$topic)),trainSize = c(1:testLower,testUpper:nrow(input)), testSize =testLower+1:testUpper-1, virgin = FALSE)
-   models <- train_models(input.corpus,algorithms = c("SVM","MAXENT","GLMNET","NNET"))
-   results <- classify_models(input.corpus, models)
-   
-   #SVM
-   print("SVM analytics")
-   SVM.analytics <- append(SVM.analytics,foldAnalytics(cbind(results$SVM_LABEL,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
-   
-   #MAXENT
-   print("MAXENT analytics")
-   MAXENT.analytics <- append(MAXENT.analytics,foldAnalytics(cbind(results$MAXENT_LABEL,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
-      
-   #GLMNET
-   print("GLMNET analytics")
-   GLMNET.analytics <- append(GLMNET.analytics,foldAnalytics(cbind(results$GLMNET_LABEL,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
-   
-   #NNET
-   print("NNET analytics")
-   NNET.analytics <- append(NNET.analytics,foldAnalytics(cbind(results$NNET_LABEL,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
-   
-  #don't be Naive!
-  print("Naive bayes")
-  NB.model = naiveBayes(NB.matrix[c(1:testLower,testUpper:nrow(input)),], input$topic[c(1:testLower,testUpper:nrow(input))])
-  NB.predicted = predict(NB.model,NB.natrix[testLower+1:testUpper-1,])
-  NB.analytics <- append(NB.analytics,foldAnalytics(cbind(NB.predicted,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
-  
-  
-   }
- print("Micro and Macro")
- SVM.micro <- cbind("SVM-mic",microOverall(SVM.analytics))
- SVM.macro <- cbind("SVM-mac",macroOverall(SVM.analytics))
- 
- MAXENT.micro <- cbind("MAXENT-mic",microOverall(MAXENT.analytics))
- MAXENT.macro <- cbind("MAXENT-mac",macroOverall(MAXENT.analytics))
- 
- GLMNET.micro <- cbind("GLMNET-mic",microOverall(GLMNET.analytics))
- GLMNET.macro <- cbind("GLMNET-mac",macroOverall(GLMNET.analytics))
- 
- NNET.micro <- cbind("NNET-mic",microOverall(NNET.analytics))
- NNET.macro <- cbind("NNET-mac",macroOverall(NNET.analytics))
- 
- NB.micro <- cbind("NB-mic",microOverall(NB.analytics))
- NB.macro <- cbind("NB-mac",macroOverall(NB.analytics))
- 
- 
- 
- allAnalytics <- rbind(SVM.micro,SVM.macro, MAXENT.micro, MAXENT.macro, GLMNET.micro, GLMNET.macro, NNET.micro, NNET.macroNB.micro, NB.macro)
- write.csv(allAnalytics,"allAnalytics.csv")
- 
-return(allAnalytics)
+  }
+
+  print(paste("Creating ",n,"-gram features"))
+  #these will store the analytical information during and after folding
+  analytics <-NULL
+  allAnalytics <- NULL
+
+  # lets fold this up
+  for(fold in 1:k){
+    print(paste("Fold ", fold))
+    #train using (k-1)n/k instances and test using n/k, see documentation on what this is doing
+    sizeOfTest <- floor(nrow(input)/k)
+    testLower <-  ((fold-1)*sizeOfTest)+1
+    testUpper<- testLower + sizeOfTest
+    if(testUpper >= nrow(input)){testUpper <- nrow(input)-1}
+
+    input.corpus <-create_container(input.matrix,as.numeric(factor(input$topic)),trainSize = c(1:testLower,testUpper:(nrow(input))), testSize =c((testLower+1):(testUpper-1)), virgin = FALSE)
+
+    if(classifier=="NB"){
+      #don't be Naive!
+      print("Using Naive bayes classifier")
+      NB.model = naiveBayes(NB.matrix[c(1:testLower,testUpper:(nrow(input))),], input$topic[c(1:testLower,testUpper:(nrow(input)))])
+      NB.predicted = predict(NB.model,NB.matrix[testLower+1:testUpper-1,])
+      analytics <- append(analytics,foldAnalytics(cbind(NB.predicted,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
+    }else{
+      print(paste("Using ",classifier," classifier"))
+      model <- train_model(input.corpus,classifier,list(...))
+      result <- classify_model(input.corpus, model)
+      analytics<- append(analytics,foldAnalytics(cbind(result[,1],input$topic[testLower+1:testUpper-1]),unique(input$topic)))
+
+    }
+  }
+
+  print("Calculating Micro and Macro averages")
+
+  micro <- unname(microOverall(analytics))
+  macro <- unname(macroOverall(analytics))
+ print(micro)
+ print(macro)
+  allAnalytics <- rbind(allAnalytics,macro,micro)
+  names(allAnalytics) <- c("avg-type","precision","accuracy","recall","f-measure")
+  write.csv(allAnalytics,paste0(n,"gram"-k,"fold",classifier,".csv"))
+
+  return(allAnalytics)
 }

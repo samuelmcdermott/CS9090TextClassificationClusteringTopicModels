@@ -2,7 +2,7 @@ macroOverall = function(res){
   macroOverallAverage = data.frame() #output frame
   numClasses = length(res[[1]]) #number of classes
   numFolds = length(res) #number of folds
-  
+
   for(measure in 1:4){
     sum = 0 #the sum for this measure across all classes and folds
     for(c in 1:numClasses){
@@ -12,6 +12,5 @@ macroOverall = function(res){
     }
     macroOverallAverage[1,measure]= sum/(numFolds*numClasses) #get the overall macro average for this measure
   }
-  names(macroOverallAverage) <- c("precision","accuracy","recall","f-measure")
   return(macroOverallAverage)
 }

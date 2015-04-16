@@ -7,7 +7,7 @@ microOverall = function(res){
   sumTP=0 #sum of true positives across all classes, across all folds
   sumFN = 0 #sum of false negatives across all classes, across all folds
   for(c in 1:numClasses){
-    for(i in 1:numFolds){  
+    for(i in 1:numFolds){
       sumFP = sumFP + res[[i]][[c]]$falsePositive #add the measure for this fold and class
       sumTN = sumTN + res[[i]][[c]]$trueNegative
       sumTP = sumTP + res[[i]][[c]]$truePositive
@@ -19,6 +19,6 @@ microOverall = function(res){
   microAverage[1,2] = (sumTP +sumTN)/(sumTP + sumFP+sumFN+sumTN) #accuracy
   microAverage[1,3] = sumTN/(sumFP+sumTN) #recall
   microAverage[1,4] = (2*microAverage[1,1]*microAverage[3,1])/(microAverage[1,1]+microAverage[3,1]) #f measure
-  names(microOverallAverage) <- c("precision","accuracy","recall","f-measure")
+
 return(microAverage)
 }

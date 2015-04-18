@@ -1,7 +1,7 @@
-featureClassification<-function(input,n,k, classifier,...){
+featureClassification<-function(input,n,k,classifier,...){
   require(RTextTools)
   require(e1071)
-
+  require(RWeka)
   #just incase user inputted incorrectly
   classifier <- toupper(classifier)
 
@@ -11,7 +11,7 @@ featureClassification<-function(input,n,k, classifier,...){
   input$text <- as.character(input$text)
 
   #create a dtm
-  input.matrix <- create_matrix(cbind(input$title,input$text), language = "english",ngramLength = n,removeNumbers = TRUE, removePunctuation = TRUE, removeStopwords = TRUE, stemWords = TRUE, toLower = TRUE, weighting = tm::weightTfIdf)
+  input.matrix <- create_matrix(cbind(input$title,input$text), language = "english", removeNumbers = TRUE, removePunctuation = TRUE, removeStopwords = TRUE, stemWords = TRUE, toLower = TRUE, weighting = tm::weightTfIdf)
   #for Naive Bayes we need it as an actual matrix
   if(classifier == "NB"){
   NB.matrix <-as.matrix(input.matrix)
@@ -52,11 +52,13 @@ featureClassification<-function(input,n,k, classifier,...){
 
   micro <- unname(microOverall(analytics))
   macro <- unname(macroOverall(analytics))
+  micro <- cbind("micro",micro)
+  macro <- cbind("macro",macro)
  print(micro)
  print(macro)
   allAnalytics <- rbind(allAnalytics,macro,micro)
-  names(allAnalytics) <- c("avg-type","precision","accuracy","recall","f-measure")
-  write.csv(allAnalytics,paste0(n,"gram"-k,"fold",classifier,".csv"))
+  names(allAnalytics) <- c("avg-type","precision","accuracy","recall")
+  write.csv(allAnalytics,paste0(n,"gram_",k,"fold_",classifier,".csv"))
 
   return(allAnalytics)
 }

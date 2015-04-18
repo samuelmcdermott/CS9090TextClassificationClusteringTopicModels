@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{csvsimple}
+\usepackage{subcaption}
+\usepackage[font={small}]{caption}
+\usepackage[usenames,dvipsnames]{color}
+\lstset{ %
+ 	language=R,                     
+	basicstyle=\footnotesize,       
+ 	keywordstyle = \footnotesize,
+ 	commentstyle=\ttfamily\color{blue},
+  	numbers=left,                   
+  	numberstyle=\scriptsize\color{Gray}, 
+	numbersep =5pt,
+  	stepnumber=1,                   
+ 	backgroundcolor=\color{white},  
+ 	showspaces=false,              
+ 	showstringspaces=false,         
+ 	showtabs=true,                 
+ 	frame=single,                   
+ 	rulecolor=\color{black},        
+ 	tabsize=1,                      
+ 	captionpos=b,                   
+    escapeinside={(*}{*)},         
+ 	alsoletter = {.<-},    
+  	alsoother={\$},
+    otherkeywords={!=, ~, \$, *, \&, \%/\%, \%*\%, \%\%, <-, <<-, /},
+    deletekeywords={c}, 
+   	breakatwhitespace = true,  
+ 	breaklines=true
+} 
+\title{CS909 Week 10:  Text classification, clustering and topic models}
+\author{Samuel McDermott u1466355}
+\usepackage{pdfpages}
+\begin{document}
+\maketitle
+\section{Introduction}
+This report demonstrates the use of text classification, clustering and topic models for the Reuters-21578 dataset \cite{Lewis2013}.  This dataset consists of 21578 documents, extracted from the Reuters newswire in 1987, each with multiple or no labels.  The aim of this work is to test a variety of features (topic models, n-grams), as well as text classifiers (???) and clustering (???).  
+
+The work in this project was done using R and several packages (cited as used).  The code associated with this report can be found at \texttt{http://git.io/vvNci}.  
+\section{Preprocessing and Data Cleaning}
+\textbf{Associated R code: \texttt{TestPreprocessing.R}}
+
+\\The Reuters-21578\cite{Lewis2013} dataset is a \texttt{.csv} which consists of the label for document, the title of the article and the text in the article.  
+
+Some articles have several labels, and some have none.  The first step is to take this information apart, so that in the final dataset, each document has only one label.  This means that the same document may appear several times in the corpus, once for each label.  This was done to ensure that each label accurately contained each document associated with it.
+
+The next stage is to select the 10 most popular labels in the dataset.  These were provided to us and are: \textit{earn, acquisitions, money-fx, grain, crude, trade, interest, ship, wheat, corn}. This reduces the dataset size and provides a more concentrated selection of documents to label.  The documents are then randomly ordered, so that k-fold evaluation can be carried out later.
+
+\section{Topic models} 
+\bibliography{reportBib}
+\bibliographystyle{IEEEtran}
+\end{document}

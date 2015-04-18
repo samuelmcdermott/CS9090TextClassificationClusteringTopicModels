@@ -3,7 +3,7 @@ macroOverall = function(res){
   numClasses = length(res[[1]]) #number of classes
   numFolds = length(res) #number of folds
 
-  for(measure in 1:4){
+  for(measure in 1:3){
     sum = 0 #the sum for this measure across all classes and folds
     for(c in 1:numClasses){
       for(i in 1:numFolds){

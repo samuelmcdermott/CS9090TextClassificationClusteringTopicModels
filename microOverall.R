@@ -18,7 +18,6 @@ microOverall = function(res){
   microAverage[1,1] = sumTP/(sumTP+sumFP) #precision
   microAverage[1,2] = (sumTP +sumTN)/(sumTP + sumFP+sumFN+sumTN) #accuracy
   microAverage[1,3] = sumTN/(sumFP+sumTN) #recall
-  microAverage[1,4] = (2*microAverage[1,1]*microAverage[3,1])/(microAverage[1,1]+microAverage[3,1]) #f measure
 
 return(microAverage)
 }

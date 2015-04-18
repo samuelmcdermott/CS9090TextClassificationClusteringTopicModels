@@ -1,11 +1,4 @@
 preprocess<-function(input.filename){
-  require(tm)
-  require(slam)
-  require(NLP)
-  require(openNLP)
-  require(openNLPdata)
-  require(rJava)
-  require(SnowballC)
 
   options(stringsAsFactors = FALSE) #a default option that we need to change
 

@@ -3,7 +3,7 @@ Submission for Warwick University: CS909 Data Mining
 by Samuel McDermott (u1466355)
 
 ##Start here
-This repository contains a selection of R functions that allow text classification, clustering and topic models.  It was designed for the Reuters-21578, although may be open enough to support other datasets.  
+This repository contains a selection of R functions that allow text classification, clustering and topic models.  It was designed for the Reuters-21578, although may be open enough to support other datasets.  (Its probably easier to source all the files in this project to make sure all the interconnected-ness works)
 
 ##Preprocessing
 The Reuters-21578 dataset contains a set of 21578 documents.  Each document has been manually labelled (binary classification), has a document title and document text.  

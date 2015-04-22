@@ -6,11 +6,13 @@ lda<-function(input,n,k){
   input$topic <- factor(input$topic)
   input$title <- as.character(input$title)
   input$text <- as.character(input$text)
+  #get the document term matrix
+  dtm<- convertToDtm(cbind(input$text,input$title),n)
 
- dtm<- convertToDtm(cbind(input$text,input$title),n)
- #return(dtm)
- rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
- dtm   <- dtm[rowTotals> 0, ]           #remove all docs without words
-lda <-LDA(dtm,k)
-return(lda)
+  rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
+  dtm   <- dtm[rowTotals> 0, ]           #remove all docs without words
+  #create a topic model with k topics
+  lda <-LDA(dtm,k)
+  #return this topic model
+  return(lda)
 }

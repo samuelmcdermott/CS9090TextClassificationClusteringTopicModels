@@ -4,7 +4,7 @@ clustering <-function(input){
   require(fpc)
 
   #if necessary for testing
-  input <- input[sample(1:nrow(input),4000,replace=FALSE),]
+  #input <- input[sample(1:nrow(input),4000,replace=FALSE),]
 
   #get everything in the right format
   input$topic <- as.numeric(factor(input$topic))
@@ -40,7 +40,7 @@ clustering <-function(input){
   #calculate analytics
   analytics <- cbind(
     kmeans = cluster.stats(dist.matrix, kmean$cluster, input$topic, compareonly = TRUE),
-    hc = cluster.stats(dist.matrix, HAC, input$topic, compareonly = TRUE),
+    hc = cluster.stats(dist.matrix, HAcut, input$topic, compareonly = TRUE),
     #EM = cluster.stats(dist.matrix, EM$classification, input$topic, compareonly = TRUE)
   )
   return(analytics)

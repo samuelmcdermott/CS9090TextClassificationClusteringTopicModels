@@ -54,17 +54,19 @@ featureClassification<-function(input,n,k,classifier,...){
   }
 
   print("Calculating Micro and Macro averages")
-  #get the micro and macro
+  #get the micro and macro analytics
   micro <- unname(microOverall(analytics))
   macro <- unname(macroOverall(analytics))
   micro <- cbind("micro",micro)
   macro <- cbind("macro",macro)
- print(micro)
- print(macro)
+ #for rbind-ing
  names(micro) <- c("avg-type","precision","accuracy","recall")
  names(macro) <- c("avg-type","precision","accuracy","recall")
+
   allAnalytics <- rbind(allAnalytics,macro,micro)
   names(allAnalytics) <- c("avg-type","precision","accuracy","recall")
+ print(allAnalytics)
+ #write to disk
   write.csv(allAnalytics,paste0(n,"gram_",k,"fold_",classifier,".csv"))
 
   return(allAnalytics)

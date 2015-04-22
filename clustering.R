@@ -39,7 +39,7 @@ clustering <-function(input){
 
   #calculate analytics
   analytics <- cbind(
-    kmeans = cluster.stats(dist.matrix, km$cluster, input$topic, compareonly = TRUE),
+    kmeans = cluster.stats(dist.matrix, kmean$cluster, input$topic, compareonly = TRUE),
     hc = cluster.stats(dist.matrix, HAC, input$topic, compareonly = TRUE),
     #EM = cluster.stats(dist.matrix, EM$classification, input$topic, compareonly = TRUE)
   )

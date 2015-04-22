@@ -9,13 +9,9 @@ featureClassification<-function(input,n,k,classifier,...){
   input$topic <- as.numeric(factor(input$topic))
   input$title <- as.character(input$title)
   input$text <- as.character(input$text)
-
   #create a dtm
-  input.matrix <- create_matrix(cbind(input$title,input$text), language = "english", removeNumbers = TRUE, removePunctuation = TRUE, removeStopwords = TRUE, stemWords = TRUE, toLower = TRUE, weighting = tm::weightTfIdf)
-  #for Naive Bayes we need it as an actual matrix
-  if(classifier == "NB"){
-  NB.matrix <-as.matrix(input.matrix)
-  }
+  input.matrix <- convertToDtm(cbind(input$title,input$text),n)
+
 
   print(paste("Creating ",n,"-gram features"))
   #these will store the analytical information during and after folding
@@ -31,19 +27,22 @@ featureClassification<-function(input,n,k,classifier,...){
     testUpper<- testLower + sizeOfTest
     if(testUpper >= nrow(input)){testUpper <- nrow(input)-1}
 
-    input.corpus <-create_container(input.matrix,as.numeric(factor(input$topic)),trainSize = c(1:testLower,testUpper:(nrow(input))), testSize =c((testLower+1):(testUpper-1)), virgin = FALSE)
 
     if(classifier=="NB"){
       #don't be Naive!
       print("Using Naive bayes classifier")
-      NB.model = naiveBayes(NB.matrix[c(1:testLower,testUpper:(nrow(input))),], input$topic[c(1:testLower,testUpper:(nrow(input)))])
-      NB.predicted = predict(NB.model,NB.matrix[testLower+1:testUpper-1,])
-      analytics <- append(analytics,foldAnalytics(cbind(NB.predicted,input$topic[testLower+1:testUpper-1]),unique(input$topic)))
+      NB.matrix <-as.matrix(input.matrix) #for Naive Bayes we need it as an actual matrix
+
+      NB.model = naiveBayes(NB.matrix[c(1:testLower,testUpper:(nrow(input))),], as.factor(input[c(1:testLower,testUpper:(nrow(input))),c("topic")]))
+      NB.predicted = predict(NB.model,NB.matrix[(testLower+1):(testUpper-1),])
+      analytics <- append(analytics,foldAnalytics(cbind(NB.predicted,input[(testLower+1):(testUpper-1),c("topic")]),unique(input$topic)))
     }else{
+      input.corpus <-create_container(input.matrix,as.factor(input$topic),trainSize = c(1:testLower,testUpper:(nrow(input))), testSize =c((testLower+1):(testUpper-1)), virgin = FALSE)
+
       print(paste("Using ",classifier," classifier"))
       model <- train_model(input.corpus,classifier,list(...))
       result <- classify_model(input.corpus, model)
-      analytics<- append(analytics,foldAnalytics(cbind(result[,1],input$topic[testLower+1:testUpper-1]),unique(input$topic)))
+      analytics<- append(analytics,foldAnalytics(cbind(result[,1],input$topic[(testLower+1):(testUpper-1)]),unique(input$topic)))
 
     }
   }
@@ -56,6 +55,8 @@ featureClassification<-function(input,n,k,classifier,...){
   macro <- cbind("macro",macro)
  print(micro)
  print(macro)
+ names(micro) <- c("avg-type","precision","accuracy","recall")
+ names(macro) <- c("avg-type","precision","accuracy","recall")
   allAnalytics <- rbind(allAnalytics,macro,micro)
   names(allAnalytics) <- c("avg-type","precision","accuracy","recall")
   write.csv(allAnalytics,paste0(n,"gram_",k,"fold_",classifier,".csv"))

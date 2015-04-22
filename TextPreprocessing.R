@@ -7,13 +7,13 @@ preprocess<-function(input.filename){
   #-----------------------------------#
   print("Reading in data")
   #The 10 most populus classes, and the ones we'll use for evaluation
-  populus = c("topic.earn","topic.acquisitions",  "topic.money-fx",  "topic.grain",	"topic.crude",	"topic.trade",	"topic.interest",	"topic.ship",	"topic.wheat",	"topic.corn")  #make sure we don't use factors for strings as default
+  populus = c("topic.earn","topic.acq",  "topic.money.fx",  "topic.grain",	"topic.crude",	"topic.trade",	"topic.interest",	"topic.ship",	"topic.wheat",	"topic.corn")  #make sure we don't use factors for strings as default
 
   #get in the data
   input.raw <- read.csv(file=input.filename,header=T,sep=",")
 
   #sample for testing purposes
-  #rt.raw <- rt.raw[sample(1:nrow(rt.raw),2000,replace=FALSE),]
+  #input.raw <- input.raw[sample(1:nrow(input.raw),2000,replace=FALSE),]
 
   #this will hold everything we're outputting
   output.df = NULL
@@ -23,7 +23,7 @@ preprocess<-function(input.filename){
   #-----------------------------------#
 
   #find the columns that identify the topics
-  topicColumns <-grep("topic",attributes(rt.raw)$names,ignore.case = TRUE, value = FALSE)
+  topicColumns <-grep("topic",attributes(input.raw)$names,ignore.case = TRUE, value = FALSE)
 
   for(i in 1:nrow(input.raw)){
     #Find the number of topics associated with this document
@@ -47,7 +47,7 @@ preprocess<-function(input.filename){
   #choose the documents that have the 10 most popular topics
   output.df <- subset(output.df, subset = topic %in% populus)
   #shuffle up the instances for bias free k fold
-  output.df <- output.df[sample(1:nrow(rt.df),size=nrow(rt.df),replace=FALSE),]
+  output.df <- output.df[sample(1:nrow(output.df),size=nrow(output.df),replace=FALSE),]
   #we want the topic to be a factor
   output.df$topic <- as.factor(output.df$topic)
   #return a dataframe with the topic, title and text for the correct documents

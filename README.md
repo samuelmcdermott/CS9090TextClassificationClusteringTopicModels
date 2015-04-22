@@ -28,7 +28,7 @@ To create topic models for this dataset, use `lda.R`. This uses a Latent Dirichl
 `k` is the number of topics you want to create.
 
 ####Values:
-`topicmodel` is an LDA topic model.  Further processing can be found at [topicmodels](http://cran.r-project.org/web/packages/topicmodels/index.html).  The most useful is `terms(topicmodel)`.
+`topicmodel` is an LDA topic model.  Further processing can be found at [topicmodels](http://cran.r-project.org/web/packages/topicmodels/index.html).  The most useful is `terms(topicmodel,10)` which shows the top 10 terms for each topic.
 
 ##Classification
 This, `featureClassification.R`, is very open code, that allows you to classify text documents using a large number of classifiers and get suitable macro and micro analytics for it. The user can define the ngrams, the number of folds, the classifier, and any further parameters for the model.

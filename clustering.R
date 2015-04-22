@@ -4,7 +4,7 @@ clustering <-function(input){
   require(fpc)
 
   #if necessary for testing
-  #input <- input[sample(1:nrow(input),2000,replace=FALSE),]
+  input <- input[sample(1:nrow(input),4000,replace=FALSE),]
 
   #get everything in the right format
   input$topic <- as.numeric(factor(input$topic))
@@ -26,22 +26,22 @@ clustering <-function(input){
 
   # Hierarchical Agglomerative
   dist.matrix <- dist(input.matrix, method = "euclidean") # distance matrix
-  HA<- hclust(dist.mat, method="ward.D2") #do hierarchical clustering
+  HA<- hclust(dist.matrix, method="ward.D2") #do hierarchical clustering
   plot(HA,labels = FALSE) # display dendogram
   HAcut <- cutree(HA, k=10) # cut tree into 10 clusters
   # draw dendogram with red borders around the 10 clusters
   rect.hclust(HA, k=10, border="red")
 
 
-  #Expectation maximisation
-  EM <- Mclust(input.matrix,G=10) # do expectation maximisation and plot
-  plot(prcomp(input.matrix)$x, col=EM$cl,pch=20, cex=0.5,xlim =c(-3.5,10.5),ylim=c(-10,5))
+#   #Expectation maximisation
+#   EM <- Mclust(input.matrix,G=10) # do expectation maximisation and plot
+#   plot(prcomp(input.matrix)$x, col=EM$cl,pch=20, cex=0.5,xlim =c(-3.5,10.5),ylim=c(-10,5))
 
   #calculate analytics
   analytics <- cbind(
     kmeans = cluster.stats(dist.matrix, km$cluster, input$topic, compareonly = TRUE),
     hc = cluster.stats(dist.matrix, HAC, input$topic, compareonly = TRUE),
-    hc = cluster.stats(dist.matrix, EM$classification, input$topic, compareonly = TRUE)
+    #EM = cluster.stats(dist.matrix, EM$classification, input$topic, compareonly = TRUE)
   )
   return(analytics)
 

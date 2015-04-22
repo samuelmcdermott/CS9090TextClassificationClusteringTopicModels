@@ -1,6 +1,6 @@
-lda<-function(input,n){
+lda<-function(input,n,k){
   require(topicmodels)
-  require(RTextTools)
+
   #input <- input[sample(1:nrow(input),2000,replace=FALSE),]
   #put everything in right format (& make the topic a numeric factor)
   input$topic <- factor(input$topic)
@@ -11,7 +11,6 @@ lda<-function(input,n){
  #return(dtm)
  rowTotals <- apply(dtm , 1, sum) #Find the sum of words in each Document
  dtm   <- dtm[rowTotals> 0, ]           #remove all docs without words
-k <- length(unique(input$topic))
 lda <-LDA(dtm,k)
 return(lda)
 }

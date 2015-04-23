@@ -66,10 +66,10 @@ This, `featureClassification.R`, is very open code, that allows you to classify 
 This is code,`clustering.R` to perform cluster evaluation for text documents.  It uses unigrams to cluster data using k-means, hierarchical agglomerative and expectation maximisation.  In each case, the code creates 10 clusters, to try and match the 10 manually labels of the preprocessed Reuters dataset.  For each clustering algorithm, a suitable graph is also plotted.
 
 ###Example Usage:
-`clusAnalysis <- clustering(documents)`
+`clustering(documents)`
 
 ####Arguments:
 `documents` is the preprocessed dataframe.
 
 ####Values:
-`clusAnalysis` is a dataframe with the algorithms and their Rand index.  
+Prints the algorithms and their Rand index.  

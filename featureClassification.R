@@ -33,9 +33,9 @@ featureClassification<-function(input,n,k,classifier,...){
       print("Using Naive bayes classifier")
       NB.matrix <-as.matrix(input.matrix) #for Naive Bayes we need it as an actual matrix
       #train using the training data
-      NB.model = naiveBayes(NB.matrix[c(1:testLower,testUpper:(nrow(input))),], as.factor(input[c(1:testLower,testUpper:(nrow(input))),c("topic")]))
+      NB.model <- naiveBayes(NB.matrix[c(1:testLower,testUpper:(nrow(input))),], as.factor(input[c(1:testLower,testUpper:(nrow(input))),c("topic")]))
       #predict using the testing data
-      NB.predicted = predict(NB.model,NB.matrix[(testLower+1):(testUpper-1),])
+      NB.predicted <- predict(NB.model,NB.matrix[(testLower+1):(testUpper-1),])
       #get the analytics for this fold and append to previous folds
       analytics <- append(analytics,foldAnalytics(cbind(NB.predicted,input[(testLower+1):(testUpper-1),c("topic")]),unique(input$topic)))
     }else{
@@ -59,14 +59,14 @@ featureClassification<-function(input,n,k,classifier,...){
   macro <- unname(macroOverall(analytics))
   micro <- cbind("micro",micro)
   macro <- cbind("macro",macro)
- #for rbind-ing
- names(micro) <- c("avg-type","precision","accuracy","recall")
- names(macro) <- c("avg-type","precision","accuracy","recall")
+  #for rbind-ing
+  names(micro) <- c("avg-type","precision","accuracy","recall")
+  names(macro) <- c("avg-type","precision","accuracy","recall")
 
   allAnalytics <- rbind(allAnalytics,macro,micro)
   names(allAnalytics) <- c("avg-type","precision","accuracy","recall")
- print(allAnalytics)
- #write to disk
+  print(allAnalytics)
+  #write to disk
   write.csv(allAnalytics,paste0(n,"gram_",k,"fold_",classifier,".csv"))
 
   return(allAnalytics)

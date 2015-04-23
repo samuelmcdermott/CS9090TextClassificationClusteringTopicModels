@@ -15,9 +15,9 @@ convertToDtm <-function(input,n){
   #make the ngram function, where n is inputted by the user
   ngramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = n, max = n))
   #make corpus into document term matrix, with ngrams
-  dtm <-DocumentTermMatrix(corpus,control = list(tokenize = ngramTokenizer))
+  dtm <-DocumentTermMatrix(corpus,control = list(tokenize = ngramTokenizer,weighting =weightTfIdf))
   #remove the sparse terms, best set between 0.95 and 0.99
-  dtm <- removeSparseTerms(dtm,0.99)
+  dtm <- removeSparseTerms(dtm,0.98)
   #return this document term matrix
   return(dtm)
 }

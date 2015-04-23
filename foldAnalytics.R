@@ -14,9 +14,9 @@ foldAnalytics <-function(predictedAndActual,classes){
     accuracy <- (truePositive+trueNegative)/(length(predictedAndActual[,1]))
     recall<- truePositive/(truePositive+falseNegative)
     #make a list of these measures
-    measureList = list(falsePositive=falsePositive,trueNegative = trueNegative, truePositive = truePositive, falseNegative = falseNegative,precision=precision, accuracy = accuracy, recall=recall)
+    measureList <- list(falsePositive=falsePositive,trueNegative = trueNegative, truePositive = truePositive, falseNegative = falseNegative,precision=precision, accuracy = accuracy, recall=recall)
     #if any of the results are NaN, they should be 0
-    measureList = rapply( measureList, f=function(x) ifelse(is.nan(x),0,x), how="replace" )
+    measureList <- rapply( measureList, f=function(x) ifelse(is.nan(x),0,x), how="replace" )
     #add this measure list to the class list
     classesList <- append(classesList,list(measureList))
   }

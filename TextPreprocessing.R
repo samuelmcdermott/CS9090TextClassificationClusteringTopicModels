@@ -2,9 +2,6 @@ preprocess<-function(input.filename){
 
   options(stringsAsFactors = FALSE) #a default option that we need to change
 
-  #-----------------------------------#
-  #  INPUT DATA                       #
-  #-----------------------------------#
   print("Reading in data")
   #The 10 most populus classes, and the ones we'll use for evaluation
   populus = c("topic.earn","topic.acq",  "topic.money.fx",  "topic.grain",	"topic.crude",	"topic.trade",	"topic.interest",	"topic.ship",	"topic.wheat",	"topic.corn")  #make sure we don't use factors for strings as default
@@ -12,15 +9,8 @@ preprocess<-function(input.filename){
   #get in the data
   input.raw <- read.csv(file=input.filename,header=T,sep=",")
 
-  #sample for testing purposes
-  #input.raw <- input.raw[sample(1:nrow(input.raw),2000,replace=FALSE),]
-
   #this will hold everything we're outputting
-  output.df = NULL
-
-  #-----------------------------------#
-  #  ORGANSE TOPIC COLUMNS AND ROWS   #
-  #-----------------------------------#
+  output.df <- NULL
 
   #find the columns that identify the topics
   topicColumns <-grep("topic",attributes(input.raw)$names,ignore.case = TRUE, value = FALSE)
